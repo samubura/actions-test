@@ -24,4 +24,4 @@ jobs:
       - name: Use tag
         run: |
           TAG=${{steps.tagstep.outputs.tag}}
-          echo "The new version will be ${TAG#v}"
+          echo "The new version will be... ${TAG#v}"
