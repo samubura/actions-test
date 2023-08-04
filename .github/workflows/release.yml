@@ -22,4 +22,6 @@ jobs:
         id: tagstep
         run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
       - name: Use tag
-        run: echo "This is the tag ${{steps.tagstep.outputs.tag}}"
+        run: |
+          TAG=${{steps.tagstep.outputs.tag}}
+          echo "The new version will be ${TAG#v}"
