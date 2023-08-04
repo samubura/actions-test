@@ -10,13 +10,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
+  get-tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - run: cd ${{github.workspace}}
+      - name: Enter the repo folder
+        run: cd ${{github.workspace}}
       - name: Get latest tag
-        run: git describe --tags --abbrev=0
-
+        id: tagstep
+        run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
+      - name: Use tag
+        run: echo "This is the tag ${{steps.tagstep.outputs.tag}}"
