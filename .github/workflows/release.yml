@@ -4,7 +4,8 @@ name: Create Release
 on:
   # Triggers the workflow on push events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    tags:
+      - v*
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,4 +20,5 @@ jobs:
       - run: cd ${{github.workspace}}
       - name: Get latest tag
         run: git describe
+      - run: echo ${{github.ref}}
 
