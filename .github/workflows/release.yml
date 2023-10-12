@@ -2,12 +2,18 @@
 name: Create Release
 
 on:
-
+  #By default this workflow is intended to run after a tag is generated based on the commit message
   workflow_run:
     workflows: [Generate tag]
     types:
       - completed
-
+  
+  #Tagging manually can be an option to trigger a specific release, do this with extra care!
+  push:
+    branches: main
+    tags:
+      - "v*.*.*"
+      
 jobs:
   release-after-tag:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -24,6 +30,23 @@ jobs:
         uses: softprops/action-gh-release@v1
         with: 
           tag_name: ${{steps.tagstep.outputs.tag}}
-          body: "Release ${{steps.tagstep.outputs.tag}}"
-
+          name: "Release ${{steps.tagstep.outputs.tag}}"
+  
+  release-on-push-tag:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: cd ${{github.workspace}}
+      - name: Get latest tag
+        id: tagstep
+        run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT  
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with: 
+          tag_name: ${{github.ref}}
+          name: "Release ${{github.ref}}"
+          
       
