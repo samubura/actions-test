@@ -10,52 +10,27 @@ on:
   workflow_dispatch:
 
 jobs:
-  compute-major:
-    if: ${{ contains(github.event.head_commit.message, '[MAJOR]') }}
-    runs-on: ubuntu-latest
-    outputs: 
-      version: ${{steps.compute-tag.outputs.next_tag}}
-    steps:
-      - id: compute-tag
-        uses: craig-day/compute-tag@v15
-        with:
-          github_token: ${{ github.token }}
-          version_scheme: semantic
-          version_type: major
-  
-  compute-minor:
-    if: ${{ contains(github.event.head_commit.message, '[MINOR]') }}
-    runs-on: ubuntu-latest
-    outputs: 
-      version: ${{steps.compute-tag.outputs.next_tag}}
-    steps:
-      - id: compute-tag
-        uses: craig-day/compute-tag@v15
-        with:
-          github_token: ${{ github.token }}
-          version_scheme: semantic
-          version_type: minor
-  
-  compute-patch:
-    if: ${{ contains(github.event.head_commit.message, '[PATCH]') }}
-    runs-on: ubuntu-latest
-    outputs: 
-      version: ${{steps.compute-tag.outputs.next_tag}}
-    steps:
-      - id: compute-tag
-        uses: craig-day/compute-tag@v15
-        with:
-          github_token: ${{ github.token }}
-          version_scheme: semantic
-          version_type: patch
-
   release:
+    if: ${{contains(github.event.head_commit.message, '[MAJOR]') || contains(github.event.head_commit.message, '[MINOR]') || contains(github.event.head_commit.message, '[PATCH]')}}
     runs-on: ubuntu-latest
-    if: ${{always() && (contains(github.event.head_commit.message, '[MAJOR]') || contains(github.event.head_commit.message, '[MINOR]') || contains(github.event.head_commit.message, '[PATCH]'))}}
-    needs: [compute-major, compute-minor, compute-patch]
     steps:
+      - id: compute-versiontype
+        run: echo "versiontype=${{ contains(github.event.head_commit.message, '[MAJOR]') && 'major' || contains(github.event.head_commit.message, '[MINOR]') && 'minor' || contains(github.event.head_commit.message, '[PATCH]') && 'patch'}}" >> "$GITHUB_OUTPUT"
+
+      - name: "Print type"
+        run: echo ${{steps.compute-versiontype.outputs.versiontype}}
+
+      - id: compute-tag
+        uses: craig-day/compute-tag@v15
+        with:
+          github_token: ${{ github.token }}
+          version_scheme: semantic
+          version_type: ${{steps.compute-versiontype.outputs.versiontype}}
+
       - name: "print-tag"
-        run: echo "Next tag will be ${{needs.*.outputs.version}}"
+        run: echo "Next tag will be  ${{steps.compute-tag.outputs.next_tag}}"
+      
+      
 
 
 
