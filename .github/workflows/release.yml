@@ -9,9 +9,9 @@ on:
       - completed
   
   #Tagging manually can be an option to trigger a specific release, do this with extra care!
-  push:
-    tags:
-      - "v*.*.*"
+#  push:
+#    tags:
+#      - "v*.*.*"
       
 jobs:
   build-artifact:
