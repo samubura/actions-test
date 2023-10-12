@@ -9,9 +9,9 @@ on:
       - completed
   
   #Tagging manually can be an option to trigger a specific release, do this with extra care!
-#  push:
-#    tags:
-#      - "v*.*.*"
+  push:
+    tags:
+      - "v*.*.*"
       
 jobs:
   build-artifact:
@@ -43,13 +43,12 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.0
-        with:
-          fetch-depth: 0
-      - run: cd ${{github.workspace}}
       - name: Get latest tag
         id: tagstep
-        run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT  
+        run: |
+          TAG=${{github.ref}}
+          TOREMOVE="refs/tags/"
+          echo "tag=${TAG//$TOREMOVE/}" >> $GITHUB_OUTPUT
       - name: Release
         uses: softprops/action-gh-release@v0.1.15
         with: 
