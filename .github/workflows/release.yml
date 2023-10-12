@@ -17,8 +17,6 @@ jobs:
       - id: compute-versiontype
         run: echo "versiontype=${{ contains(github.event.head_commit.message, '[MAJOR]') && 'major' || contains(github.event.head_commit.message, '[MINOR]') && 'minor' || contains(github.event.head_commit.message, '[PATCH]') && 'patch'}}" >> "$GITHUB_OUTPUT"
 
-      - name: "Print type"
-        run: echo ${{steps.compute-versiontype.outputs.versiontype}}
 
       - id: compute-tag
         uses: craig-day/compute-tag@v15
@@ -27,8 +25,7 @@ jobs:
           version_scheme: semantic
           version_type: ${{steps.compute-versiontype.outputs.versiontype}}
 
-      - name: "print-tag"
-        run: echo "Next tag will be  ${{steps.compute-tag.outputs.next_tag}}"
+      - run: echo "Next tag will be  ${{steps.compute-tag.outputs.next_tag}}"
       
       
 
