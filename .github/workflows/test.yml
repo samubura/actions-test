@@ -18,4 +18,5 @@ jobs:
       - name: Use tag
         run: |
           TAG=${{github.ref}}
-          echo `expr match "$TAG" '.*\(*.*.*)'`
+          TOREMOVE="refs/tags/"
+          echo ${TAG//$TOREMOVE/}
