@@ -10,44 +10,52 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-major:
+  compute-major:
     if: ${{ contains(github.event.head_commit.message, '[MAJOR]') }}
     runs-on: ubuntu-latest
+    outputs: 
+      version: ${{steps.compute-tag.outputs.next_tag}}
     steps:
-      - id: compute_tag
+      - id: compute-tag
         uses: craig-day/compute-tag@v15
         with:
           github_token: ${{ github.token }}
           version_scheme: semantic
           version_type: major
-      - name: "print-tag"
-        run: echo "Next tag will be ${{steps.compute_tag.outputs.next_tag}}"
   
-  release-minor:
+  compute-minor:
     if: ${{ contains(github.event.head_commit.message, '[MINOR]') }}
     runs-on: ubuntu-latest
+    outputs: 
+      version: ${{steps.compute-tag.outputs.next_tag}}
     steps:
-      - id: compute_tag
+      - id: compute-tag
         uses: craig-day/compute-tag@v15
         with:
           github_token: ${{ github.token }}
           version_scheme: semantic
           version_type: minor
-      - name: "print-tag"
-        run: echo "Next tag will be ${{steps.compute_tag.outputs.next_tag}}"
   
-  release-patch:
+  compute-patch:
     if: ${{ contains(github.event.head_commit.message, '[PATCH]') }}
     runs-on: ubuntu-latest
+    outputs: 
+      version: ${{steps.compute-tag.outputs.next_tag}}
     steps:
-      - id: compute_tag
+      - id: compute-tag
         uses: craig-day/compute-tag@v15
         with:
           github_token: ${{ github.token }}
           version_scheme: semantic
           version_type: patch
+
+  release:
+    runs-on: ubuntu-latest
+    if: ${{contains(github.event.head_commit.message, '[MAJOR]') || contains(github.event.head_commit.message, '[MINOR]') || contains(github.event.head_commit.message, '[PATCH]')}}
+    needs: [compute-major, compute-minor, compute-patch]
+    steps:
       - name: "print-tag"
-        run: echo "Next tag will be ${{steps.compute_tag.outputs.next_tag}}"
+        run: echo "Next tag will be ${{needs.*.outputs.version}}"
 
 
 
