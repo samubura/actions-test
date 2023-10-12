@@ -10,7 +10,6 @@ on:
   
   #Tagging manually can be an option to trigger a specific release, do this with extra care!
   push:
-    branches: main
     tags:
       - "v*.*.*"
       
