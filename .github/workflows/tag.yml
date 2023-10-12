@@ -20,10 +20,12 @@ jobs:
           github_token: ${{ github.token }}
           version_scheme: semantic
           version_type: ${{steps.compute-versiontype.outputs.versiontype}}
+      
+      - uses: actions/checkout@v3
+
+      - run: cd ${{github.workspace}}
 
       - run: echo "Next tag will be  ${{steps.compute-tag.outputs.next_tag}}"
-
-      - run: ls -la
 
       - run: git tag -a ${{steps.compute-tag.outputs.next_tag}} -m "Release ${{steps.compute-tag.outputs.next_tag}}"
 
