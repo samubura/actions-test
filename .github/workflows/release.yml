@@ -14,11 +14,18 @@ on:
       - "v*.*.*"
       
 jobs:
+  build-artifact:
+    if: ${{ github.event.workflow_run.conclusion == 'success' ||  github.event_name == 'push'}} 
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Doing something..."
+
   release-after-tag:
+    needs: build-artifact
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 0
       - run: cd ${{github.workspace}}
@@ -26,7 +33,7 @@ jobs:
         id: tagstep
         run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT  
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v0.1.15
         with: 
           tag_name: ${{steps.tagstep.outputs.tag}}
           name: "Release ${{steps.tagstep.outputs.tag}}"
@@ -35,7 +42,7 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 0
       - run: cd ${{github.workspace}}
@@ -43,7 +50,7 @@ jobs:
         id: tagstep
         run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT  
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v0.1.15
         with: 
           tag_name: ${{steps.tagstep.outputs.tag}}
           name: "Release ${{steps.tagstep.outputs.tag}}"
