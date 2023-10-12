@@ -19,7 +19,7 @@ jobs:
 
 
       - id: compute-tag
-        uses: craig-day/compute-tag@v15
+        uses: craig-day/compute-tag@v16
         with:
           github_token: ${{ github.token }}
           version_scheme: semantic
