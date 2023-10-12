@@ -10,20 +10,47 @@ on:
   workflow_dispatch:
 
 jobs:
-  get-tag:
+  release-major:
+    if: ${{ contains(github.event.head_commit.message, '[MAJOR]') }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - id: compute_tag
+        uses: craig-day/compute-tag@v15
         with:
-          fetch-depth: 0
-      - name: Enter the repo folder
-        run: cd ${{github.workspace}}
-      - name: Print current tag
-        run: git describe --abbrev=0
-      - name: Get latest tag
-        id: tagstep
-        run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
-      - name: Use tag
-        run: |
-          TAG=${{steps.tagstep.outputs.tag}}
-          echo "The new version will be... ${TAG#v}"
+          github_token: ${{ github.token }}
+          version_scheme: semantic
+          version_type: major
+      - name: "print-tag"
+        run: echo "Next tag will be ${{steps.compute_tag.outputs.next_tag}}"
+  
+  release-minor:
+    if: ${{ contains(github.event.head_commit.message, '[MINOR]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: compute_tag
+        uses: craig-day/compute-tag@v15
+        with:
+          github_token: ${{ github.token }}
+          version_scheme: semantic
+          version_type: minor
+      - name: "print-tag"
+        run: echo "Next tag will be ${{steps.compute_tag.outputs.next_tag}}"
+  
+  release-patch:
+    if: ${{ contains(github.event.head_commit.message, '[PATCH]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: compute_tag
+        uses: craig-day/compute-tag@v15
+        with:
+          github_token: ${{ github.token }}
+          version_scheme: semantic
+          version_type: patch
+      - name: "print-tag"
+        run: echo "Next tag will be ${{steps.compute_tag.outputs.next_tag}}"
+
+
+
+
+
+          
