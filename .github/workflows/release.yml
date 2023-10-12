@@ -18,6 +18,8 @@ jobs:
           fetch-depth: 0
       - name: Enter the repo folder
         run: cd ${{github.workspace}}
+      - name: Print current tag
+        run: git describe --abbrev=0
       - name: Get latest tag
         id: tagstep
         run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
