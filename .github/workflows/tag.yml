@@ -20,13 +20,18 @@ jobs:
           github_token: ${{ github.token }}
           version_scheme: semantic
           version_type: ${{steps.compute-versiontype.outputs.versiontype}}
+
       - run: echo "Next tag will be  ${{steps.compute-tag.outputs.next_tag}}"
-      - name: Create Tag
-        uses: negz/create-tag@v1
+      
+      - uses: actions/checkout@v3
+
+      - run: cd ${{github.workspace}}
+
+      - uses: rickstaa/action-create-tag@v1
+        id: tag-create
         with:
-          version: ${{steps.compute-tag.outputs.next_tag}}
-          message: "Release ${{steps.compute-tag.outputs.next_tag}}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          tag:  ${{steps.compute-tag.outputs.next_tag}}
+          tag_exists_error: false
       
       
 
