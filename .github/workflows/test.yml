@@ -1,0 +1,28 @@
+
+name: Test
+
+on:
+  # Triggers the workflow on push events but only for the "main" branch
+  push:
+    tags:
+        - "v*.*.*"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  get-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 0
+      - name: Enter the repo folder
+        run: cd ${{github.workspace}}
+      - name: Get latest tag
+        id: tagstep
+        run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
+      - name: Use tag
+        run: |
+          TAG=${{steps.tagstep.outputs.tag}}
+          echo "The new version will be... ${TAG#v}"

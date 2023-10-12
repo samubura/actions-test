@@ -39,6 +39,7 @@ jobs:
           name: "Release ${{steps.tagstep.outputs.tag}}"
   
   release-on-push-tag:
+    needs: build-artifact
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
