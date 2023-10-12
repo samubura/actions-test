@@ -23,12 +23,9 @@ jobs:
 
       - run: echo "Next tag will be  ${{steps.compute-tag.outputs.next_tag}}"
 
-      - uses: rickstaa/action-create-tag@v1.6.3
-        id: tag-create
-        with:
-          tag:  ${{steps.compute-tag.outputs.next_tag}}
-          tag_exists_error: false
+      - run: git tag -a ${{steps.compute-tag.outputs.next_tag}} -m "Release ${{steps.compute-tag.outputs.next_tag}}"
 
+      - run: git push --tags
       
       
 
