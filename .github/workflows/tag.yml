@@ -23,6 +23,8 @@ jobs:
 
       - run: echo "Next tag will be  ${{steps.compute-tag.outputs.next_tag}}"
 
+      - run: ls -la
+
       - run: git tag -a ${{steps.compute-tag.outputs.next_tag}} -m "Release ${{steps.compute-tag.outputs.next_tag}}"
 
       - run: git push --tags
